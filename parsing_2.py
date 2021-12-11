@@ -12,12 +12,8 @@ list_of_tickers = import_file[columns_t].tolist()
 list_of_price = import_file[columns_p].tolist()
 
 
-
-
 def price_variability(index):
     df_of_year_price = import_file.loc[index, r'17/1/2019': r'19/12/2019']
-    # df_of_year_price_p = df_of_year_price[0]
-    # df_of_year_price_time = df_of_year_price[0]
     return df_of_year_price
 
 

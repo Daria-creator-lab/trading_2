@@ -10,6 +10,16 @@ columns_p = 'Price'
 
 list_of_tickers = import_file[columns_t].tolist()
 list_of_price = import_file[columns_p].tolist()
+# list_of_year_price = import_file.loc[]
+
+
+
+def price_variability(index):
+    list_price_variability = []
+
+
+
+
 
 # tickers_t = pd.read_csv(r'/Users/dary/Desktop/stocks_c.csv', usecols=columns_t, sep=';')
 # # print(type(tickers_t))

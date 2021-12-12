@@ -12,7 +12,7 @@ Time = [r'17/1/2019', r'19/2/2019', r'18/3/2019', r'22/4/2019', r'20/5/2019', r'
 class Ticker:
     def __init__(self):
         self.value = ''.upper()
-        self.price_index = 0
+        self.price_index = -1
 
     def update_textbox(self, message):
         global textbox
@@ -49,38 +49,11 @@ class Ticker:
         plt.plot(x, y, color='green', linestyle='-', marker='x', linewidth=1, markersize=4)
         plt.show()
 
-# def draw_graph(df):
-#
-#     x = Time
-#     y = df.tolist()
-#
-#     for i in range(len(y)):
-#         y[i] = y[i].replace(u'\xa0$', u'')
-#         y[i] = y[i].replace(u',', u'.')
-#         y[i] = float(y[i])
-#
-#     fig = plt.figure(figsize=(30, 5))
-#     plt.ylabel('Цена в $')
-#     plt.xlabel('Дата')
-#     plt.title('Изменение цены')
-#     plt.plot(x, y, color='green', linestyle='-', marker='x', linewidth=1, markersize=4)
-#     plt.show()
-
-
-# def check_input():
-#     textbox_value = get_ticker_from_text()
-#     t = str(textbox_value).upper()
-#     if t in parsing_2.list_of_tickers:
-#         price_index = parsing_2.list_of_tickers.index(t)
-#         update_textbox('Цена одной акции {} : {}'.format(t, parsing_2.list_of_price[price_index]))
-#
-#         # df_variability = parsing_2.price_variability(price_index)
-#         # draw_graph(df_variability)
-
-
-
-
-
+    def re_enter(self):
+        self.price_index = -1
+        self.value = ''
+        textbox.setText('Введите тикер: ')
+        self.check_input()
 
 
 
@@ -92,17 +65,20 @@ if __name__ == '__main__':
     app.setStyle('Fusion')
 
     button_graph = QPushButton('График цены за 5 лет')
-    button_graph.setFixedSize(190, 120)
+    button_graph.setFixedSize(211, 120)
     button_graph.clicked.connect(T.draw_graph)
 
     button_price = QPushButton('Текущая цена')
-    button_price.setFixedSize(190, 120)
+    button_price.setFixedSize(211, 120)
     button_price.clicked.connect(T.check_input)
+
+    button_re_enter = QPushButton('Повторить ввод тикера')
+    button_re_enter.setFixedSize(211, 120)
+    button_re_enter.clicked.connect(T.re_enter)
 
     textbox = QTextEdit()
     textbox.setFont(QFont('Times New Roman', 16))
     textbox.setText('Введите тикер: ')
-    # textbox.setReadOnly(True)
 
     window = QWidget()
     window.setWindowTitle('Биржевые торги')
@@ -113,6 +89,7 @@ if __name__ == '__main__':
     layout.addWidget(textbox, 0, 0, 1, 4)
     layout.addWidget(button_price, 1, 0, 1, 1)
     layout.addWidget(button_graph, 1, 1, 1, 1)
+    layout.addWidget(button_re_enter, 1, 2, 1, 1)
 
     window.setLayout(layout)
     window.show()

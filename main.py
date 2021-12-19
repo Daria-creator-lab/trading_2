@@ -2,17 +2,20 @@ import parsing_2
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QTextEdit, QPushButton, QGridLayout
 from PyQt5.QtGui import QFont, QIcon
+# from PyQt5 import QtGui, QtWidgets
 from matplotlib import pyplot as plt
 
 
 Time = [r'17/1/2019', r'19/2/2019', r'18/3/2019', r'22/4/2019', r'20/5/2019', r'19/6/2019', r'19/7/2019',
         r'19/8/2019', r'19/9/2019', r'21/10/2019', r'19/11/2019', r'19/12/2019']
+list_of_year = ['2019', '2020']
 
 
 class Ticker:
     def __init__(self):
         self.value = ''.upper()
         self.price_index = -1
+        self.year = '2020'
 
     def update_textbox(self, message):
         global textbox
@@ -23,6 +26,21 @@ class Ticker:
         textbox_value = textbox_value.replace(u'Введите тикер: ', u'')
         self.value = textbox_value
         return textbox_value
+
+    def input_year(self):
+        textbox.setText('Введите год: ')
+        textbox_value_year = str(textbox.toPlainText())
+        textbox_value_year = textbox_value_year.replace(u'Введите год: ', u'')
+        return textbox_value_year
+
+
+    # def check_input_year(self):
+    #     textbox_value_year = self.get_year_from_text()
+    #     if textbox_value_year in list_of_year:
+    #         self.year = textbox_value_year
+    #     else:
+    #         self.update_textbox('Данных для этого года еще нет в системе. Посмортите для 2020.')
+
 
     def check_input(self):
         textbox_value = self.get_ticker_from_text()
@@ -55,6 +73,54 @@ class Ticker:
         textbox.setText('Введите тикер: ')
         self.check_input()
 
+    def robot(self):
+        y = self.input_year()
+        print(y)
+
+
+class extra_window(Ticker, PyQt5.QtWidgets):
+    # def __init__(self):
+    #     self.e_app = QApplication([])
+    #     self.e_app.setStyle('Fusion')
+    #
+    #     self.e_window = QWidget()
+    #     self.e_window.setWindowTitle('Дополнительные возможности')
+    #     self.e_window.resize(640, 400)
+
+    def button(self):
+        e_app = QApplication([])
+        e_app.setStyle('Fusion')
+
+        e_window = QWidget()
+        e_window.setWindowTitle('Дополнительные возможности')
+        e_window.resize(640, 400)
+
+        button_graph = QPushButton('График цены за год')
+        button_graph.setFixedSize(160, 120)
+        button_graph.clicked.connect(Ticker.draw_graph)
+
+        button_robot = QPushButton('Робот')
+        button_robot.setFixedSize(160, 120)
+        button_robot.clicked.connect(Ticker.robot)
+
+        e_textbox = QTextEdit()
+        e_textbox.setFont(QFont('Times New Roman', 16))
+        e_textbox.setText('Введите год: ')
+
+        e_layout = QGridLayout()
+        e_layout.addWidget(button_robot, 1, 1, 1, 1)
+        e_layout.addWidget(button_graph, 1, 0, 1, 1)
+
+        e_window.setLayout(e_layout)
+        e_window.show()
+        e_app.exec_()
+
+class Main_Window(self):
+
+
+
+
+
 
 
 if __name__ == '__main__':
@@ -64,17 +130,25 @@ if __name__ == '__main__':
     app = QApplication([])
     app.setStyle('Fusion')
 
-    button_graph = QPushButton('График цены за 5 лет')
-    button_graph.setFixedSize(211, 120)
-    button_graph.clicked.connect(T.draw_graph)
+    # button_graph = QPushButton('График цены за 5 лет')
+    # button_graph.setFixedSize(160, 120)
+    # button_graph.clicked.connect(T.draw_graph)
 
     button_price = QPushButton('Текущая цена')
-    button_price.setFixedSize(211, 120)
+    button_price.setFixedSize(160, 120)
     button_price.clicked.connect(T.check_input)
 
     button_re_enter = QPushButton('Повторить ввод тикера')
-    button_re_enter.setFixedSize(211, 120)
+    button_re_enter.setFixedSize(160, 120)
     button_re_enter.clicked.connect(T.re_enter)
+
+    button_extra = QPushButton('Дополнительно')
+    button_extra.setFixedSize(160, 120)
+    button_extra.clicked.connect(extra_window().button)
+
+    # button_robot = QPushButton('Робот')
+    # button_robot.setFixedSize(160, 120)
+    # button_robot.clicked.connect(T.robot)
 
     textbox = QTextEdit()
     textbox.setFont(QFont('Times New Roman', 16))
@@ -82,20 +156,18 @@ if __name__ == '__main__':
 
     window = QWidget()
     window.setWindowTitle('Биржевые торги')
-    # window.setWindowIcon()
     window.resize(640, 400)
 
     layout = QGridLayout()
     layout.addWidget(textbox, 0, 0, 1, 4)
     layout.addWidget(button_price, 1, 0, 1, 1)
-    layout.addWidget(button_graph, 1, 1, 1, 1)
-    layout.addWidget(button_re_enter, 1, 2, 1, 1)
+    # layout.addWidget(button_graph, 1, 1, 1, 1)
+    layout.addWidget(button_re_enter, 1, 1, 1, 1)
+    # layout.addWidget(button_robot, 1, 2, 1, 1)
+    layout.addWidget(button_extra,1, 2, 1, 1)
 
     window.setLayout(layout)
     window.show()
+
     sys.exit(app.exec_())
-
-    # button_diagram =
-    # button_favorites =
-
 

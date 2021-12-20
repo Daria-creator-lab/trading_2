@@ -6,8 +6,10 @@ from PyQt5.QtGui import QFont, QIcon
 from matplotlib import pyplot as plt
 
 
-Time = [r'17/1/2019', r'19/2/2019', r'18/3/2019', r'22/4/2019', r'20/5/2019', r'19/6/2019', r'19/7/2019',
+Time_2019 = [r'17/1/2019', r'19/2/2019', r'18/3/2019', r'22/4/2019', r'20/5/2019', r'19/6/2019', r'19/7/2019',
         r'19/8/2019', r'19/9/2019', r'21/10/2019', r'19/11/2019', r'19/12/2019']
+Time_2020 = [r'17/1/2020', r'19/2/2020', r'18/3/2020', r'22/4/2020', r'20/5/2020', r'19/6/2020', r'20/7/2020',
+        r'19/8/2020', r'21/9/2020', r'19/10/2020', r'19/11/2020', r'18/12/2020']
 list_of_year = ['2019', '2020']
 
 
@@ -27,20 +29,17 @@ class Ticker:
         self.value = textbox_value
         return textbox_value
 
-    def input_year(self):
-        textbox.setText('Введите год: ')
+    def get_year_from_text(self):
         textbox_value_year = str(textbox.toPlainText())
         textbox_value_year = textbox_value_year.replace(u'Введите год: ', u'')
         return textbox_value_year
 
-
-    # def check_input_year(self):
-    #     textbox_value_year = self.get_year_from_text()
-    #     if textbox_value_year in list_of_year:
-    #         self.year = textbox_value_year
-    #     else:
-    #         self.update_textbox('Данных для этого года еще нет в системе. Посмортите для 2020.')
-
+    def check_input_year(self):
+        textbox_value_year = self.get_year_from_text()
+        if textbox_value_year in list_of_year:
+            self.year = textbox_value_year
+        else:
+            self.update_textbox('Данных для этого года еще нет в системе. Посмортите для 2020.')
 
     def check_input(self):
         textbox_value = self.get_ticker_from_text()
@@ -50,10 +49,17 @@ class Ticker:
             self.update_textbox('Цена одной акции {} : {}'.format(t, parsing_2.list_of_price[self.price_index]))
 
     def draw_graph(self):
-        df_variability = parsing_2.price_variability(self.price_index)
+        # df_variability = parsing_2.price_variability(self.price_index)
+        if self.year == 2019:
+            x = Time_2019
+            df_variability = parsing_2.price_variability_2019(self.price_index)
+            y = df_variability.tolist()
+        else:
+            x = Time_2020
+            df_variability = parsing_2.price_variability_2020(self.price_index)
+            y = df_variability.tolist()
 
-        x = Time
-        y = df_variability.tolist()
+        # y = df_variability.tolist()
 
         for i in range(len(y)):
             y[i] = y[i].replace(u'\xa0$', u'')
@@ -74,51 +80,49 @@ class Ticker:
         self.check_input()
 
     def robot(self):
-        y = self.input_year()
-        print(y)
+        self.check_input_year()
+        dict_of_deals = {}
+        for i in range(1, 12):
+            if self.year == 2019:
+                df_variability = parsing_2.price_variability_2019(self.price_index)
+                list_of_price = df_variability.tolist()
+            else:
+                df_variability = parsing_2.price_variability_2020(self.price_index)
+                list_of_price = df_variability.tolist()
+            for k in range(len(list_of_price)):
+                list_of_price[k] = list_of_price[k].replace(u'\xa0$', u'')
+                list_of_price[k] = list_of_price[k].replace(u',', u'.')
+                list_of_price[k] = float(list_of_price[k])
+
+            if list_of_price[i] < sum(list_of_price[0:i])/i:
+                dict_of_deals[i] = 'купили, потому что дешевле, чем в среднем за предыдущий период'
+            elif i % 2 == 0:
+                dict_of_deals[i] = 'купили, потому что регулярное пополнение'
+            else:
+                dict_of_deals[i] = 'ничего не покупали'
+        self.update_textbox('Список сделок:')
+        for j in dict_of_deals.items():
+            self.update_textbox('{}'.format(j))
 
 
-class extra_window(Ticker, PyQt5.QtWidgets):
-    # def __init__(self):
-    #     self.e_app = QApplication([])
-    #     self.e_app.setStyle('Fusion')
-    #
-    #     self.e_window = QWidget()
-    #     self.e_window.setWindowTitle('Дополнительные возможности')
-    #     self.e_window.resize(640, 400)
-
-    def button(self):
-        e_app = QApplication([])
-        e_app.setStyle('Fusion')
-
-        e_window = QWidget()
-        e_window.setWindowTitle('Дополнительные возможности')
-        e_window.resize(640, 400)
+    def extra_button(self):
+        window.setWindowTitle('Дополнительные возможности')
 
         button_graph = QPushButton('График цены за год')
         button_graph.setFixedSize(160, 120)
-        button_graph.clicked.connect(Ticker.draw_graph)
+        button_graph.clicked.connect(self.draw_graph)
 
         button_robot = QPushButton('Робот')
         button_robot.setFixedSize(160, 120)
-        button_robot.clicked.connect(Ticker.robot)
+        button_robot.clicked.connect(self.robot)
 
-        e_textbox = QTextEdit()
-        e_textbox.setFont(QFont('Times New Roman', 16))
-        e_textbox.setText('Введите год: ')
+        textbox.setText('Введите год: ')
 
-        e_layout = QGridLayout()
-        e_layout.addWidget(button_robot, 1, 1, 1, 1)
-        e_layout.addWidget(button_graph, 1, 0, 1, 1)
+        layout.addWidget(button_robot, 1, 1, 1, 1)
+        layout.addWidget(button_graph, 1, 0, 1, 1)
 
-        e_window.setLayout(e_layout)
-        e_window.show()
-        e_app.exec_()
-
-class Main_Window(self):
-
-
-
+        window.setLayout(layout)
+        window.show()
 
 
 
@@ -144,7 +148,7 @@ if __name__ == '__main__':
 
     button_extra = QPushButton('Дополнительно')
     button_extra.setFixedSize(160, 120)
-    button_extra.clicked.connect(extra_window().button)
+    button_extra.clicked.connect(T.extra_button)
 
     # button_robot = QPushButton('Робот')
     # button_robot.setFixedSize(160, 120)

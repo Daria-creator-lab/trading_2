@@ -12,13 +12,14 @@ list_of_tickers = import_file[columns_t].tolist()
 list_of_price = import_file[columns_p].tolist()
 
 
-def price_variability(index):
+def price_variability_2019(index):
     df_of_year_price = import_file.loc[index, r'17/1/2019': r'19/12/2019']
     return df_of_year_price
 
 
-
-
+def price_variability_2020(index):
+    df_of_year_price = import_file.loc[index, r'17.01.2020': r'18.12.2020']
+    return df_of_year_price
 
 # tickers_t = pd.read_csv(r'/Users/dary/Desktop/stocks_c.csv', usecols=columns_t, sep=';')
 # # print(type(tickers_t))
@@ -36,4 +37,3 @@ def price_variability(index):
 # # print(list_of_price)
 # # print(tickers_p.loc[0])
 # # print(str(tickers_p.loc[0]).split('\n')[0])
-

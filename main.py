@@ -49,8 +49,8 @@ class Ticker:
             self.update_textbox('Цена одной акции {} : {}'.format(t, parsing_2.list_of_price[self.price_index]))
 
     def draw_graph(self):
-        # df_variability = parsing_2.price_variability(self.price_index)
-        if self.year == 2019:
+        self.check_input_year()
+        if self.year == '2019':
             x = Time_2019
             df_variability = parsing_2.price_variability_2019(self.price_index)
             y = df_variability.tolist()
@@ -58,8 +58,7 @@ class Ticker:
             x = Time_2020
             df_variability = parsing_2.price_variability_2020(self.price_index)
             y = df_variability.tolist()
-
-        # y = df_variability.tolist()
+        # добавить 2021 год
 
         for i in range(len(y)):
             y[i] = y[i].replace(u'\xa0$', u'')
@@ -82,6 +81,7 @@ class Ticker:
     def robot(self):
         self.check_input_year()
         dict_of_deals = {}
+        dict_of_deals_by_month = {}
         for i in range(1, 12):
             if self.year == 2019:
                 df_variability = parsing_2.price_variability_2019(self.price_index)
@@ -100,10 +100,14 @@ class Ticker:
                 dict_of_deals[i] = 'купили, потому что регулярное пополнение'
             else:
                 dict_of_deals[i] = 'ничего не покупали'
-        self.update_textbox('Список сделок:')
-        for j in dict_of_deals.items():
-            self.update_textbox('{}'.format(j))
+        if self.year == '2019':
+            dict_of_deals_by_month = {month: description_of_deal for month, description_of_deal in zip(Time_2019, dict_of_deals.values())}
+        elif self.year == '2020':
+            dict_of_deals_by_month = {month: description_of_deal for month, description_of_deal in zip(Time_2020, dict_of_deals.values())}
 
+        self.update_textbox('Список сделок:')
+        for j in dict_of_deals_by_month.items():
+            self.update_textbox('{}'.format(j))
 
     def extra_button(self):
         window.setWindowTitle('Дополнительные возможности')
